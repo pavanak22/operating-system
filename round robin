@@ -1,0 +1,73 @@
+#include <stdio.h>
+
+#define MAX_PROCESS 10
+
+// Structure to represent a process
+struct Process {
+    int processID;
+    int burstTime;
+    int remainingTime;
+};
+
+// Circular queue data structure
+struct Queue {
+    int front, rear;
+    struct Process processes[MAX_PROCESS];
+};
+
+// Function to enqueue a process in the queue
+void enqueue(struct Queue *q, struct Process p) {
+    if ((q->rear + 1) % MAX_PROCESS == q->front) {
+        printf("Queue is full. Process %d cannot be enqueued.\n", p.processID);
+    } else {
+        q->rear = (q->rear + 1) % MAX_PROCESS;
+        q->processes[q->rear] = p;
+    }
+}
+
+// Function to dequeue a process from the queue
+struct Process dequeue(struct Queue *q) {
+    if (q->front == q->rear) {
+        struct Process emptyProcess = { -1, 0, 0 };
+        return emptyProcess;
+    } else {
+        q->front = (q->front + 1) % MAX_PROCESS;
+        return q->processes[q->front];
+    }
+}
+
+int main() {
+    int n, quantum;
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    struct Queue readyQueue;
+    readyQueue.front = 0;
+    readyQueue.rear = 0;
+
+    for (int i = 1; i <= n; i++) {
+        struct Process p;
+        p.processID = i;
+        printf("Enter burst time for Process %d: ", i);
+        scanf("%d", &p.burstTime);
+        p.remainingTime = p.burstTime;
+        enqueue(&readyQueue, p);
+    }
+
+    printf("Enter time quantum: ");
+    scanf("%d", &quantum);
+
+    printf("\nExecution Order:\n");
+    while (readyQueue.front != readyQueue.rear) {
+        struct Process currentProcess = dequeue(&readyQueue);
+        int executionTime = (currentProcess.remainingTime < quantum) ? currentProcess.remainingTime : quantum;
+        currentProcess.remainingTime -= executionTime;
+        printf("Executing Process %d for %d time units\n", currentProcess.processID, executionTime);
+
+        if (currentProcess.remainingTime > 0) {
+            enqueue(&readyQueue, currentProcess);
+        }
+    }
+
+    return 0;
+}
