@@ -1,0 +1,50 @@
+#include <stdio.h>
+
+// Structure to represent a process
+struct Process {
+    int id;
+    int priority;
+    int burst_time;
+};
+
+// Function to select the highest priority process
+int findHighestPriorityProcess(struct Process processes[], int n) {
+    int highest_priority = processes[0].priority;
+    int index = 0;
+
+    for (int i = 1; i < n; i++) {
+        if (processes[i].priority < highest_priority) {
+            highest_priority = processes[i].priority;
+            index = i;
+        }
+    }
+
+    return index;
+}
+
+int main() {
+    int n; // Number of processes
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    struct Process processes[n];
+
+    // Input process information
+    for (int i = 0; i < n; i++) {
+        processes[i].id = i + 1;
+        printf("Enter priority for Process %d: ", i + 1);
+        scanf("%d", &processes[i].priority);
+        printf("Enter burst time for Process %d: ", i + 1);
+        scanf("%d", &processes[i].burst_time);
+    }
+
+    // Scheduling loop
+    printf("\nExecution Order:\n");
+    for (int i = 0; i < n; i++) {
+        int next_process = findHighestPriorityProcess(processes, n);
+        printf("Executing Process %d\n", processes[next_process].id);
+     
+    }
+
+    return 0;
+}
