@@ -1,0 +1,48 @@
+#include<stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Usage: %s <filename>\n", argv[0]);
+        return 1;
+    }
+
+    char *filename = argv[1];
+    struct stat fileStat;
+
+    if (stat(filename, &fileStat) == -1) {
+        perror("stat");
+        return 1;
+    }
+
+    // Check the file access permissions for the owner, group, and others
+    if (fileStat.st_mode & S_IRUSR)
+        printf("Owner has read permission.\n");
+    if (fileStat.st_mode & S_IWUSR)
+        printf("Owner has write permission.\n");
+    if (fileStat.st_mode & S_IXUSR)
+        printf("Owner has execute permission.\n");
+
+    if (fileStat.st_mode & S_IRGRP)
+        printf("Group has read permission.\n");
+    if (fileStat.st_mode & S_IWGRP)
+        printf("Group has write permission.\n");
+    if (fileStat.st_mode & S_IXGRP)
+        printf("Group has execute permission.\n");
+
+    if (fileStat.st_mode & S_IROTH)
+        printf("Others have read permission.\n");
+    if (fileStat.st_mode & S_IWOTH)
+        printf("Others have write permission.\n");
+    if (fileStat.st_mode & S_IXOTH)
+        printf("Others have execute permission.\n");
+
+    // Determine the user type
+        printf("This is in the group of the file.\n");
+        printf("This is a user other than the owner or group.\n");
+
+    return 0;
+}
